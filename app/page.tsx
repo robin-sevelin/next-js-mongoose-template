@@ -1,3 +1,10 @@
+import ItemList from './components/utils/ItemList';
+
 export default function Home() {
-  return <section>Home</section>;
+  return (
+    <section>
+      Home
+      <ItemList />
+    </section>
+  );
 }

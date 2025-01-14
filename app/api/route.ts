@@ -1,32 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
-import Kitten, { IKitten } from '../db/models/kitten';
+import Item, { ItemInterface } from '../db/models/item';
 import dbConnect from '../db/connection';
 
-export const GET = async () => {
+export const GET = async (): Promise<NextResponse> => {
   await dbConnect();
-  let data;
   try {
-    const kittens: IKitten[] = await Kitten.find();
-    data = Response.json({ success: true, kittens: kittens });
+    const items: ItemInterface[] = await Item.find();
+    return NextResponse.json({ success: true, items }, { status: 200 });
   } catch (error) {
-    data = Response.json({ success: false, error });
+    const errorMessage =
+      error instanceof Error ? error.message : 'Ett okänt fel uppstod';
+    return NextResponse.json(
+      { success: false, error: errorMessage },
+      { status: 500 }
+    );
   }
-  return data;
 };
 
-export const POST = async () => {
+export const POST = async (request: NextRequest) => {
   await dbConnect();
-  let data;
-  try {
-    const kittens: IKitten = await Kitten.create({ name: 'Fia' });
-    data = Response.json({ success: true, kittens: kittens });
-  } catch (error) {
-    data = Response.json({ success: false, error });
-  }
-  return data;
-};
 
-export const PUT = async (request: NextRequest) => {
-  const data = await request.json();
-  return NextResponse.json(data);
+  try {
+    const body = await request.json();
+
+    const item: ItemInterface = await Item.create(body);
+
+    return NextResponse.json({ success: true, item }, { status: 201 });
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Ett okänt fel uppstod';
+
+    return NextResponse.json(
+      { success: false, error: errorMessage },
+      { status: 500 }
+    );
+  }
 };
