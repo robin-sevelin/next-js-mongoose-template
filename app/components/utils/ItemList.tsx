@@ -1,11 +1,10 @@
-import { GET } from '@/app/api/route';
 import { ItemInterface } from '@/app/db/models/item';
 
 import React from 'react';
 import ItemView from './ItemView';
 
 const ItemList = async () => {
-  const response = await GET();
+  const response = await fetch('http://localhost:3000/api');
   const data = await response.json();
   const itemList: ItemInterface[] = data.items;
 
